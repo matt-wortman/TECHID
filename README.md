@@ -115,21 +115,21 @@ npx prisma migrate dev   # Create/apply migrations
 
 ## Documentation
 
+See [docs/README.md](docs/README.md) for a complete documentation index.
+
 | Document | Description |
 |----------|-------------|
 | [CLAUDE.md](CLAUDE.md) | AI assistant context and project overview |
-| [TECHNICAL-MANUAL.md](TECHNICAL-MANUAL.md) | Comprehensive technical documentation |
-| [PLAIN-ENGLISH-GUIDE.md](PLAIN-ENGLISH-GUIDE.md) | Non-technical explanation of the system |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute to this project |
-| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Common issues and solutions |
 
-### Architecture Documents
+### Quick Links
 
-| Document | Description |
-|----------|-------------|
-| [1-ARCHITECTURE_ROADMAP.md](1-ARCHITECTURE_ROADMAP.md) | Current state and future vision |
-| [2-shared-answer-architecture.md](2-shared-answer-architecture.md) | Core philosophy: "One technology, many forms, shared answers" |
-| [3-TECHNOLOGY_MULTI_FORM_MASTER_PLAN.md](3-TECHNOLOGY_MULTI_FORM_MASTER_PLAN.md) | Complete blueprint for the Technology aggregate |
+| Category | Key Documents |
+|----------|---------------|
+| **Onboarding** | [PLAIN-ENGLISH-GUIDE.md](docs/onboarding/PLAIN-ENGLISH-GUIDE.md), [DEVELOPER_ONBOARDING.md](docs/onboarding/DEVELOPER_ONBOARDING.md) |
+| **Architecture** | [shared-answer-architecture.md](docs/architecture/2-shared-answer-architecture.md), [TECHNICAL-MANUAL.md](docs/architecture/TECHNICAL-MANUAL.md) |
+| **Ops** | [TROUBLESHOOTING.md](docs/ops/TROUBLESHOOTING.md) |
+| **API** | [API_REFERENCE.md](docs/api/API_REFERENCE.md) |
 
 ## Environment Variables
 

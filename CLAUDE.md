@@ -47,11 +47,11 @@ npx prisma migrate dev         # Create/apply migrations (requires npx prisma de
 ### 🚨 Critical Architecture Documents (MUST READ)
 Before making architectural changes, you MUST read these foundational documents:
 
-1. **[shared-answer-architecture.md](shared-answer-architecture.md)** - Core philosophy: "One technology, many forms, shared answers." Explains that forms are **virtual representations** of question groups, and answers are keyed by `(techId, questionKey)` not per-submission.
+1. **[shared-answer-architecture.md](docs/architecture/2-shared-answer-architecture.md)** - Core philosophy: "One technology, many forms, shared answers." Explains that forms are **virtual representations** of question groups, and answers are keyed by `(techId, questionKey)` not per-submission.
 
-2. **[TECHNOLOGY_MULTI_FORM_MASTER_PLAN.md](TECHNOLOGY_MULTI_FORM_MASTER_PLAN.md)** - Complete blueprint for Technology aggregate, stage supplements, Question Dictionary, binding paths, personas, and migration strategy.
+2. **[TECHNOLOGY_MULTI_FORM_MASTER_PLAN.md](docs/architecture/3-TECHNOLOGY_MULTI_FORM_MASTER_PLAN.md)** - Complete blueprint for Technology aggregate, stage supplements, Question Dictionary, binding paths, personas, and migration strategy.
 
-3. **[ARCHITECTURE_ROADMAP.md](ARCHITECTURE_ROADMAP.md)** - Current state, in-flight work, and future vision. Technology aggregate holds canonical data keyed by `techId`.
+3. **[ARCHITECTURE_ROADMAP.md](docs/architecture/1-ARCHITECTURE_ROADMAP.md)** - Current state, in-flight work, and future vision. Technology aggregate holds canonical data keyed by `techId`.
 
 **Key Principle:** `techId` is the business identifier that anchors ALL data. Forms are just assembled views that pull questions from the Question Dictionary. Section codes and form-specific identifiers should NOT be primary organizational concepts.
 
