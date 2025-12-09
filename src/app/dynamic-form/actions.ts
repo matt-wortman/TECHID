@@ -433,8 +433,8 @@ export async function loadDraftResponse(draftId: string, userId?: string) {
       }
     }
 
-    let responses: FormResponse = {}
-    let repeatGroups: RepeatableGroupData = {}
+    const responses: FormResponse = {}
+    const repeatGroups: RepeatableGroupData = {}
     let answerMetadata: Record<string, AnswerStatusDetail>
 
     // Load answers from TechnologyAnswer if submission has a technologyId
@@ -728,8 +728,8 @@ export async function getSubmissionDetail(submissionId: string) {
       }
     }
 
-    let responses: FormResponse = {}
-    let repeatGroups: RepeatableGroupData = {}
+    const responses: FormResponse = {}
+    const repeatGroups: RepeatableGroupData = {}
 
     // Load answers from TechnologyAnswer if submission has a technologyId
     if (submission.technologyId) {

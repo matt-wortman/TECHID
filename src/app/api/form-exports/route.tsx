@@ -157,8 +157,8 @@ async function fetchSubmissionData(submissionId: string): Promise<SubmissionData
       return null;
     }
 
-    let responses: FormResponse = {};
-    let repeatGroups: RepeatableGroupData = {};
+    const responses: FormResponse = {};
+    const repeatGroups: RepeatableGroupData = {};
 
     // Load answers from TechnologyAnswer if submission has a technologyId
     if (submission.technologyId) {

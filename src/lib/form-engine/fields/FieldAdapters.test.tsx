@@ -6,20 +6,26 @@ import { createMockQuestion } from '@/__tests__/test-utils/formTemplateBuilders'
 import type { FormQuestionWithDetails } from '../types';
 
 // Mock the UI components to simplify testing
+const MockInput = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
+  ({ className, ...props }, ref) => (
+    <input ref={ref} className={className} data-testid="input" {...props} />
+  )
+);
+MockInput.displayName = 'MockInput';
+
 jest.mock('@/components/ui/input', () => ({
-  Input: React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
-    ({ className, ...props }, ref) => (
-      <input ref={ref} className={className} data-testid="input" {...props} />
-    )
-  ),
+  Input: MockInput,
 }));
 
+const MockTextarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
+  ({ className, ...props }, ref) => (
+    <textarea ref={ref} className={className} data-testid="textarea" {...props} />
+  )
+);
+MockTextarea.displayName = 'MockTextarea';
+
 jest.mock('@/components/ui/textarea', () => ({
-  Textarea: React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
-    ({ className, ...props }, ref) => (
-      <textarea ref={ref} className={className} data-testid="textarea" {...props} />
-    )
-  ),
+  Textarea: MockTextarea,
 }));
 
 jest.mock('@/components/ui/select', () => ({

@@ -114,8 +114,8 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      let responses: Record<string, Prisma.JsonValue> = {};
-      let repeatable: Record<string, unknown[]> = {};
+      const responses: Record<string, Prisma.JsonValue> = {};
+      const repeatable: Record<string, unknown[]> = {};
 
       // Load answers from TechnologyAnswer if submission has a technologyId
       if (submission.technologyId) {
