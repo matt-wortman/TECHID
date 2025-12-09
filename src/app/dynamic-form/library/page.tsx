@@ -39,7 +39,6 @@ import {
   Loader2,
   BookOpen,
 } from 'lucide-react';
-import { AppNavBar } from '@/components/navigation';
 import { toast } from 'sonner';
 import { DataSource } from '@prisma/client';
 
@@ -148,7 +147,7 @@ export default function QuestionLibraryPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#e0e5ec] flex items-center justify-center">
+      <div className="flex items-center justify-center py-32">
         <div className="text-center text-[#353535]">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-lg text-[#6b7280]">Loading question library...</p>
@@ -158,10 +157,7 @@ export default function QuestionLibraryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#e0e5ec]">
-      <AppNavBar />
-
-      {/* Main Content */}
+    <>
       <div className="container mx-auto px-4 py-8 max-w-6xl space-y-6">
         {/* Header */}
         <Card className={containerCardClass}>
@@ -338,6 +334,6 @@ export default function QuestionLibraryPage() {
           onSuccess={handleEditSuccess}
         />
       )}
-    </div>
+    </>
   );
 }

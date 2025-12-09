@@ -7,7 +7,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { format } from 'date-fns';
 import { FieldType } from '@prisma/client';
 import { parseRepeatableGroupConfig } from '@/lib/form-engine/json-utils';
-import { Home } from 'lucide-react';
 import {
   extractScoringInputs,
   calculateAllScores,
@@ -268,27 +267,16 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
     'px-3 py-1.5 text-sm font-medium flex items-center bg-[#e0e5ec] border-0 text-[#353535] rounded-xl transition-all [box-shadow:5px_5px_10px_0px_#a3b1c6,_-5px_-5px_10px_0px_rgba(255,255,255,0.6)] hover:[box-shadow:3px_3px_6px_0px_#a3b1c6,_-3px_-3px_6px_0px_rgba(255,255,255,0.6)] active:[box-shadow:inset_3px_3px_6px_0px_rgba(163,177,198,0.4),inset_-3px_-3px_6px_0px_rgba(255,255,255,0.6)]';
 
   return (
-    <div className="min-h-screen bg-[#e0e5ec]">
-      <nav className="bg-[#e0e5ec] border-0 shadow-none">
-        <div className="container mx-auto px-4 py-4 max-w-5xl">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <Link href="/" className={navButtonClass}>
-                <Home className="mr-2 h-4 w-4" />
-                Home
-              </Link>
-              <Link href="/dynamic-form/submissions" className={navButtonClass}>
-                ← Back to submissions
-              </Link>
-            </div>
-            <Badge variant="outline" className="uppercase tracking-wide">
-              {status}
-            </Badge>
-          </div>
-        </div>
-      </nav>
-
-      <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
+    <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
+      {/* Page header with back link and status */}
+      <div className="flex items-center justify-between gap-4">
+        <Link href="/dynamic-form/submissions" className={navButtonClass}>
+          ← Back to submissions
+        </Link>
+        <Badge variant="outline" className="uppercase tracking-wide">
+          {status}
+        </Badge>
+      </div>
         <Card className="bg-[#e0e5ec] shadow-none border-0">
           <CardContent className="space-y-2">
             <h1 className="text-2xl font-bold text-[#353535]">{template.name}</h1>
@@ -525,7 +513,6 @@ export default async function SubmissionDetailPage({ params }: SubmissionDetailP
             </Card>
           );
         })}
-      </div>
     </div>
   );
 }

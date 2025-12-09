@@ -3,7 +3,6 @@
 import { useMemo, useState } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import { TemplateDetail } from '@/app/dynamic-form/builder/actions'
-import { AppNavBar } from '@/components/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { SectionsPanel } from './SectionsPanel'
@@ -38,12 +37,7 @@ export function TemplateEditorLayout({ initialTemplate, searchParams }: Template
   const lastUpdated = formatDistanceToNow(template.updatedAt, { addSuffix: true })
 
   return (
-    <div className="min-h-screen bg-[#e0e5ec]">
-      {/* Main Navigation */}
-      <AppNavBar />
-
-      {/* Page Content */}
-      <main className="container mx-auto max-w-6xl px-4 py-6">
+    <main className="container mx-auto max-w-6xl px-4 py-6">
         {/* Unified Header */}
         <div className="mb-6 space-y-4">
           {/* Top row: Back + Title + Actions */}
@@ -172,7 +166,6 @@ export function TemplateEditorLayout({ initialTemplate, searchParams }: Template
         ) : (
           <SectionsPanel templateId={template.id} sections={template.sections} />
         )}
-      </main>
 
       {/* Settings Modal */}
       <TemplateSettingsModal
@@ -180,6 +173,6 @@ export function TemplateEditorLayout({ initialTemplate, searchParams }: Template
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
       />
-    </div>
+    </main>
   )
 }

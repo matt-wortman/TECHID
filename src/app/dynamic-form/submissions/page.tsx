@@ -9,7 +9,6 @@ import { CheckCircle, Clock, Download, Eye, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
-import { AppNavBar } from '@/components/navigation';
 
 import { getUserSubmissions } from '../actions';
 import { getClientLogger, getOrCreateSessionId } from '@/lib/session';
@@ -138,7 +137,7 @@ function SubmissionsContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#e0e5ec] flex items-center justify-center">
+      <div className="flex items-center justify-center py-32">
         <div className="text-center text-[#353535]">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-lg text-[#6b7280]">Loading submissions...</p>
@@ -148,10 +147,7 @@ function SubmissionsContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#e0e5ec]">
-      <AppNavBar maxWidth="5xl" />
-
-      <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
+    <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
         <Card className={containerCardClass}>
           <CardContent className="p-6">
             <div className="flex flex-col gap-2">
@@ -261,14 +257,13 @@ function SubmissionsContent() {
             ))}
           </div>
         )}
-      </div>
     </div>
   );
 }
 
 function LoadingFallback() {
   return (
-    <div className="min-h-screen bg-[#e0e5ec] flex items-center justify-center">
+    <div className="flex items-center justify-center py-32">
       <div className="text-center text-[#353535]">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
         <p className="mt-4 text-lg text-[#6b7280]">Loading submissions...</p>

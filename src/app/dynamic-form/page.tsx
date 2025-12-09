@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FileText } from 'lucide-react';
-import { AppNavBar } from '@/components/navigation';
 import Link from 'next/link';
 import { FormEngineProvider, DynamicFormRenderer } from '@/lib/form-engine/renderer';
 import { DynamicFormNavigation } from '@/components/form/DynamicFormNavigation';
@@ -268,7 +267,7 @@ function DynamicFormContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#e0e5ec] flex items-center justify-center">
+      <div className="flex items-center justify-center py-32">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-[#6b7280]">
@@ -281,7 +280,7 @@ function DynamicFormContent() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#e0e5ec] flex items-center justify-center">
+      <div className="flex items-center justify-center py-32">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle className="text-red-600">Error Loading Form</CardTitle>
@@ -299,7 +298,7 @@ function DynamicFormContent() {
 
   if (!template) {
     return (
-      <div className="min-h-screen bg-[#e0e5ec] flex items-center justify-center">
+      <div className="flex items-center justify-center py-32">
         <Card className="w-full max-w-md">
           <CardHeader>
             <CardTitle>No Form Template Found</CardTitle>
@@ -316,41 +315,36 @@ function DynamicFormContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#e0e5ec]">
-      <AppNavBar
-        maxWidth="4xl"
-        rightContent={
-          currentDraftId && (
-            <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1 text-sm">
-              <FileText className="h-4 w-4" />
-              Draft Mode
-            </Badge>
-          )
-        }
-      />
-
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <Card className="bg-[#e0e5ec] shadow-none border-0 mb-8">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold text-[#353535]">{template.name}</h1>
-                <p className="text-[#6b7280]">{template.description}</p>
-                <p className="text-sm text-[#6b7280]">Version: {template.version}</p>
-              </div>
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <Card className="bg-[#e0e5ec] shadow-none border-0 mb-8">
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-[#353535]">{template.name}</h1>
+              <p className="text-[#6b7280]">{template.description}</p>
+              <p className="text-sm text-[#6b7280]">Version: {template.version}</p>
+            </div>
+            <div className="text-right flex flex-col items-end gap-2">
+              {currentDraftId && (
+                <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1 text-sm">
+                  <FileText className="h-4 w-4" />
+                  Draft Mode
+                </Badge>
+              )}
               {isDraftLoaded && (
-                <div className="text-right">
-                  <Badge variant="outline" className="mb-2">
+                <>
+                  <Badge variant="outline">
                     Draft Loaded
                   </Badge>
                   <p className="text-sm text-[#6b7280]">
                     Continuing previous work
                   </p>
-                </div>
+                </>
               )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </CardContent>
+      </Card>
 
         <FormEngineProvider
           template={template}
@@ -383,14 +377,13 @@ function DynamicFormContent() {
             />
           </div>
         </FormEngineProvider>
-      </div>
     </div>
   );
 }
 
 function LoadingFallback() {
   return (
-    <div className="min-h-screen bg-[#e0e5ec] flex items-center justify-center">
+    <div className="flex items-center justify-center py-32">
       <div className="text-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
         <p className="mt-4 text-[#6b7280]">Loading form...</p>

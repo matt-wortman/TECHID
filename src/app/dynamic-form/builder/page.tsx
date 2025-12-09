@@ -33,7 +33,6 @@ import {
   Plus,
   Trash2,
 } from 'lucide-react'
-import { AppNavBar } from '@/components/navigation'
 
 const containerCardClass = 'bg-[#e0e5ec] border-0 shadow-none rounded-3xl'
 const innerCardClass =
@@ -128,10 +127,7 @@ export default async function BuilderLandingPage({ searchParams }: BuilderPagePr
   const bannerMessage = resolveBanner(statusParam, errorParam)
 
   return (
-    <div className="min-h-screen bg-[#e0e5ec]">
-      <AppNavBar />
-
-      <main className="container mx-auto max-w-6xl space-y-6 px-4 py-10">
+    <main className="container mx-auto max-w-6xl space-y-6 px-4 py-10">
         <Card className={containerCardClass}>
           <CardContent className="p-6">
             <div className="flex flex-col gap-2">
@@ -186,8 +182,7 @@ export default async function BuilderLandingPage({ searchParams }: BuilderPagePr
             </div>
           )}
         </section>
-      </main>
-    </div>
+    </main>
   )
 }
 

@@ -14,7 +14,7 @@ import {
 import { format } from 'date-fns'
 import { FieldType } from '@prisma/client'
 import { parseRepeatableGroupConfig } from '@/lib/form-engine/json-utils'
-import { Home, Clock, AlertCircle } from 'lucide-react'
+import { Clock, AlertCircle } from 'lucide-react'
 import {
   extractScoringInputs,
   calculateAllScores,
@@ -197,48 +197,33 @@ export default async function SnapshotPage({ params }: SnapshotPageProps) {
   if (!snapshotsResult.success || !snapshotsResult.snapshots?.length) {
     // No snapshots available - show message
     return (
-      <div className="min-h-screen bg-[#e0e5ec]">
-        <nav className="bg-[#e0e5ec] border-0 shadow-none">
-          <div className="container mx-auto px-4 py-4 max-w-5xl">
-            <div className="flex items-center gap-2">
-              <Link
-                href="/"
-                className="px-3 py-1.5 text-sm font-medium flex items-center bg-[#e0e5ec] border-0 text-[#353535] rounded-xl transition-all [box-shadow:5px_5px_10px_0px_#a3b1c6,_-5px_-5px_10px_0px_rgba(255,255,255,0.6)]"
-              >
-                <Home className="mr-2 h-4 w-4" />
-                Home
-              </Link>
-              <Link
-                href={`/dynamic-form/submissions/${params.submissionId}`}
-                className="px-3 py-1.5 text-sm font-medium flex items-center bg-[#e0e5ec] border-0 text-[#353535] rounded-xl transition-all [box-shadow:5px_5px_10px_0px_#a3b1c6,_-5px_-5px_10px_0px_rgba(255,255,255,0.6)]"
-              >
-                ← Back to submission
-              </Link>
-            </div>
-          </div>
-        </nav>
-        <div className="container mx-auto px-4 py-8 max-w-5xl">
-          <Card className="bg-amber-50 border-amber-200">
-            <CardContent className="pt-6">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
-                <div>
-                  <h2 className="font-semibold text-amber-800">No Historical Snapshot Available</h2>
-                  <p className="text-sm text-amber-700 mt-1">
-                    This submission was created before the snapshot feature was implemented. Historical
-                    snapshots are only available for submissions made after this feature was added.
-                  </p>
-                  <Link
-                    href={`/dynamic-form/submissions/${params.submissionId}`}
-                    className="text-sm text-amber-800 underline mt-2 inline-block"
-                  >
-                    View current submission details →
-                  </Link>
-                </div>
+      <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
+        <Link
+          href={`/dynamic-form/submissions/${params.submissionId}`}
+          className="px-3 py-1.5 text-sm font-medium inline-flex items-center bg-[#e0e5ec] border-0 text-[#353535] rounded-xl transition-all [box-shadow:5px_5px_10px_0px_#a3b1c6,_-5px_-5px_10px_0px_rgba(255,255,255,0.6)]"
+        >
+          ← Back to submission
+        </Link>
+        <Card className="bg-amber-50 border-amber-200">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
+              <div>
+                <h2 className="font-semibold text-amber-800">No Historical Snapshot Available</h2>
+                <p className="text-sm text-amber-700 mt-1">
+                  This submission was created before the snapshot feature was implemented. Historical
+                  snapshots are only available for submissions made after this feature was added.
+                </p>
+                <Link
+                  href={`/dynamic-form/submissions/${params.submissionId}`}
+                  className="text-sm text-amber-800 underline mt-2 inline-block"
+                >
+                  View current submission details →
+                </Link>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     )
   }
@@ -340,9 +325,9 @@ export default async function SnapshotPage({ params }: SnapshotPageProps) {
   } | null
 
   return (
-    <div className="min-h-screen bg-[#e0e5ec]">
+    <>
       {/* Historical Snapshot Banner */}
-      <div className="bg-blue-600 text-white py-3">
+      <div className="bg-blue-600 text-white py-3 -mt-8 mb-4">
         <div className="container mx-auto px-4 max-w-5xl">
           <div className="flex items-center gap-3">
             <Clock className="h-5 w-5" />
@@ -364,26 +349,15 @@ export default async function SnapshotPage({ params }: SnapshotPageProps) {
         </div>
       </div>
 
-      <nav className="bg-[#e0e5ec] border-0 shadow-none">
-        <div className="container mx-auto px-4 py-4 max-w-5xl">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <Link href="/" className={navButtonClass}>
-                <Home className="mr-2 h-4 w-4" />
-                Home
-              </Link>
-              <Link href={`/dynamic-form/submissions/${params.submissionId}`} className={navButtonClass}>
-                ← Back to submission
-              </Link>
-            </div>
-            <Badge variant="outline" className="uppercase tracking-wide">
-              {submission.status}
-            </Badge>
-          </div>
+      <div className="container mx-auto px-4 py-4 max-w-5xl space-y-6">
+        <div className="flex items-center justify-between gap-4">
+          <Link href={`/dynamic-form/submissions/${params.submissionId}`} className={navButtonClass}>
+            ← Back to submission
+          </Link>
+          <Badge variant="outline" className="uppercase tracking-wide">
+            {submission.status}
+          </Badge>
         </div>
-      </nav>
-
-      <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
         {/* Technology Metadata Card (if bound) */}
         {techMeta && (
           <Card className="bg-blue-50 border-blue-200 rounded-3xl">
@@ -636,6 +610,6 @@ export default async function SnapshotPage({ params }: SnapshotPageProps) {
           )
         })}
       </div>
-    </div>
+    </>
   )
 }
