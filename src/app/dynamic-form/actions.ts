@@ -9,6 +9,7 @@ import {
   extractTechIdFromResponses,
   TechnologyIdRequiredError,
 } from '@/lib/validation/form-submission'
+import { sanitizeFormResponses } from '@/lib/validation/sanitize'
 import { logger } from '@/lib/logger'
 import { applyBindingWrites, fetchTemplateWithBindingsById, BindingMetadata, buildSubmissionAnswerMetadata } from '@/lib/technology/service'
 import { RowVersionSnapshot, OptimisticLockError, AnswerStatusDetail } from '@/lib/technology/types'
@@ -49,7 +50,15 @@ export async function submitFormResponse(
   existingDraftId?: string
 ): Promise<FormSubmissionResult> {
   try {
-    const payload = formSubmissionPayloadSchema.parse(data)
+    const rawPayload = formSubmissionPayloadSchema.parse(data)
+
+    // Sanitize user-provided form responses to prevent XSS
+    const payload = {
+      ...rawPayload,
+      responses: sanitizeFormResponses(rawPayload.responses),
+      repeatGroups: sanitizeFormResponses(rawPayload.repeatGroups),
+    }
+
     const resolvedUser = resolveUserId(userId)
     const { bindingMetadata } = await fetchTemplateWithBindingsById(payload.templateId)
 
@@ -259,7 +268,15 @@ export async function saveDraftResponse(
   existingDraftId?: string
 ): Promise<FormSubmissionResult> {
   try {
-    const payload = formSubmissionPayloadSchema.parse(data)
+    const rawPayload = formSubmissionPayloadSchema.parse(data)
+
+    // Sanitize user-provided form responses to prevent XSS
+    const payload = {
+      ...rawPayload,
+      responses: sanitizeFormResponses(rawPayload.responses),
+      repeatGroups: sanitizeFormResponses(rawPayload.repeatGroups),
+    }
+
     const resolvedUser = resolveUserId(userId)
     const { bindingMetadata } = await fetchTemplateWithBindingsById(payload.templateId)
     const trimmedUserId = userId && userId.trim().length > 0 ? userId.trim() : undefined
