@@ -1,0 +1,500 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===== TECHNOLOGY-BOUND ENTITY MODELS =====
+
+model TriageCompetitor {
+  id            String  @id @default(cuid())
+  triageStageId String
+  company       String
+  product       String?
+  revenue       String?
+  notes         String?
+
+  triageStage TriageStage @relation(fields: [triageStageId], references: [id], onDelete: Cascade)
+
+  @@index([triageStageId])
+  @@map("triage_competitors")
+}
+
+model TriageSME {
+  id             String  @id @default(cuid())
+  triageStageId  String
+  name           String
+  title          String?
+  organization   String?
+  contactInfo    String?
+  expertise      String?
+  recommendation String?
+
+  triageStage TriageStage @relation(fields: [triageStageId], references: [id], onDelete: Cascade)
+
+  @@index([triageStageId])
+  @@map("triage_smes")
+}
+
+// ===== DYNAMIC FORM SYSTEM MODELS =====
+
+model FormTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  version     String
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  sections    FormSection[]
+  submissions FormSubmission[]
+
+  @@map("form_templates")
+}
+
+model FormSection {
+  id          String  @id @default(cuid())
+  templateId  String
+  code        String // e.g., "F0", "F1"
+  title       String // e.g., "Header and identifiers"
+  description String?
+  order       Int
+  isRequired  Boolean @default(true)
+
+  template  FormTemplate   @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  questions FormQuestion[]
+
+  @@index([templateId])
+  @@map("form_sections")
+}
+
+model FormQuestion {
+  id               String    @id @default(cuid())
+  sectionId        String
+  label            String
+  type             FieldType
+  helpText         String?
+  placeholder      String?
+  validation       Json?     // Validation rules
+  conditional      Json?     // Show/hide conditions
+  repeatableConfig Json?     // Configuration for repeatable/data table fields
+  order            Int
+  isRequired       Boolean   @default(false)
+  dictionaryKey    String    // Semantic question identifier (e.g., "triage.missionAlignmentScore")
+
+  section       FormSection        @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  options       QuestionOption[]
+  scoringConfig ScoringConfig?
+  dictionary    QuestionDictionary @relation(fields: [dictionaryKey], references: [key], onDelete: Restrict)
+
+  @@index([sectionId])
+  @@index([dictionaryKey])
+  @@map("form_questions")
+}
+
+enum FieldType {
+  SHORT_TEXT
+  LONG_TEXT
+  INTEGER
+  SINGLE_SELECT
+  MULTI_SELECT
+  CHECKBOX_GROUP
+  DATE
+  REPEATABLE_GROUP
+  SCORING_0_3
+  SCORING_MATRIX
+  DATA_TABLE_SELECTOR
+}
+
+model QuestionOption {
+  id         String @id @default(cuid())
+  questionId String
+  value      String
+  label      String
+  order      Int
+
+  question FormQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("question_options")
+}
+
+model ScoringConfig {
+  id         String @id @default(cuid())
+  questionId String @unique
+  minScore   Int    @default(0)
+  maxScore   Int    @default(3)
+  weight     Float  @default(1.0)
+  criteria   Json // Scoring criteria for each value
+
+  question FormQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@map("scoring_configs")
+}
+
+model FormSubmission {
+  id           String           @id @default(cuid())
+  templateId   String
+  technologyId String?
+  status       SubmissionStatus @default(DRAFT)
+  submittedBy  String
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  submittedAt  DateTime?
+
+  template     FormTemplate              @relation(fields: [templateId], references: [id])
+  technology   Technology?               @relation(fields: [technologyId], references: [id])
+  scores       CalculatedScore[]
+  snapshots    SubmissionSnapshot[]
+
+  @@index([technologyId])
+  @@map("form_submissions")
+}
+
+enum SubmissionStatus {
+  DRAFT
+  SUBMITTED
+  REVIEWED
+  ARCHIVED
+}
+
+enum SnapshotType {
+  SUBMISSION  // Captured on Submit button
+  STAGE_GATE  // Captured at stage transition (future)
+}
+
+model CalculatedScore {
+  id           String   @id @default(cuid())
+  submissionId String
+  scoreType    String // e.g., "impact", "value", "market"
+  value        Float
+  calculatedAt DateTime @default(now())
+
+  submission FormSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@map("calculated_scores")
+}
+
+// ===== TECHNOLOGY LIFECYCLE MODELS =====
+
+model Technology {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  rowVersion Int      @default(1)
+
+  techId           String  @unique
+  technologyName   String
+  shortDescription String?
+  inventorName     String
+  inventorTitle    String?
+  inventorDept     String?
+  reviewerName     String
+  domainAssetClass String
+
+  currentStage     TechStage  @default(TRIAGE)
+  status           TechStatus @default(ACTIVE)
+  lastStageTouched TechStage?
+  lastModifiedBy   String?
+  lastModifiedAt   DateTime?
+
+  triageStage      TriageStage?
+  viabilityStage   ViabilityStage?
+  attachments      Attachment[]
+  auditLog         TechnologyAuditLog[]
+  stageHistory     StageHistory[]
+  CalculatedMetric CalculatedMetric[]
+  answers          TechnologyAnswer[]
+  submissions      FormSubmission[]
+  snapshots        SubmissionSnapshot[]
+
+  @@index([techId])
+  @@index([currentStage])
+  @@map("technologies")
+}
+
+enum TechStage {
+  TRIAGE
+  VIABILITY
+  COMMERCIAL
+  MARKET_READY
+  ARCHIVED
+}
+
+enum TechStatus {
+  ACTIVE
+  ON_HOLD
+  ABANDONED
+  COMPLETED
+}
+
+model TriageStage {
+  id           String   @id @default(cuid())
+  technologyId String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  rowVersion   Int      @default(1)
+  extendedData Json?
+
+  technologyOverview    String
+  missionAlignmentText  String
+  missionAlignmentScore Int     @default(0)
+  unmetNeedText         String
+  unmetNeedScore        Int     @default(0)
+  stateOfArtText        String
+  stateOfArtScore       Int     @default(0)
+  marketOverview        String
+  marketScore           Int     @default(0)
+  impactScore           Float   @default(0)
+  valueScore            Float   @default(0)
+  recommendation        String  @default("")
+  recommendationNotes   String?
+
+  technology  Technology         @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+  competitors TriageCompetitor[]
+  experts     TriageSME[]
+
+  @@map("triage_stages")
+}
+
+model ViabilityStage {
+  id           String   @id @default(cuid())
+  technologyId String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  rowVersion   Int      @default(1)
+  extendedData Json?
+
+  technicalFeasibility String
+  regulatoryPathway    String
+  costAnalysis         String
+  timeToMarket         Int?
+  resourceRequirements String
+  riskAssessment       String
+  technicalScore       Float  @default(0)
+  commercialScore      Float  @default(0)
+  overallViability     String @default("")
+
+  technology Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@map("viability_stages")
+}
+
+model StageHistory {
+  id           String    @id @default(cuid())
+  technologyId String
+  stage        TechStage
+  changeType   String
+  snapshot     Json
+  changedBy    String
+  changedAt    DateTime  @default(now())
+
+  technology Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@index([technologyId, stage])
+  @@map("stage_history")
+}
+
+model TechnologyAuditLog {
+  id           String     @id @default(cuid())
+  technologyId String
+  fieldPath    String
+  oldValue     Json?
+  newValue     Json?
+  stage        TechStage?
+  persona      String?
+  changedBy    String
+  changedAt    DateTime   @default(now())
+
+  technology Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@index([technologyId, changedAt])
+  @@map("technology_audit_log")
+}
+
+model Attachment {
+  id           String   @id @default(cuid())
+  technologyId String
+  fileName     String
+  fileUrl      String
+  uploadedBy   String
+  uploadedAt   DateTime @default(now())
+  category     String?
+
+  technology Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@index([technologyId])
+  @@map("attachments")
+}
+
+model CalculatedMetric {
+  id           String    @id @default(cuid())
+  technologyId String
+  key          String
+  value        Float?
+  expression   String
+  dependsOn    String[]
+  calculatedAt DateTime?
+  status       String    @default("PENDING")
+  error        String?
+
+  technology Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@index([technologyId, key], name: "calculated_metrics_technology_key_idx")
+  @@map("calculated_metrics")
+}
+
+model QuestionRevision {
+  id                String   @id @default(cuid())
+  dictionaryId      String
+  questionKey       String
+  versionNumber     Int
+  label             String
+  helpText          String?
+  options           Json?
+  validation        Json?
+  createdAt         DateTime @default(now())
+  createdBy         String?
+  changeReason      String?
+  significantChange Boolean  @default(true)
+
+  dictionary               QuestionDictionary        @relation("QuestionDictionaryRevisions", fields: [dictionaryId], references: [id], onDelete: Cascade)
+  currentFor               QuestionDictionary?       @relation("CurrentRevision")
+  technologyAnswers        TechnologyAnswer[]
+
+  @@unique([questionKey, versionNumber])
+  @@index([dictionaryId])
+  @@map("question_revisions")
+}
+
+model QuestionDictionary {
+  id                String             @id @default(cuid())
+  version           String
+  key               String             @unique
+  currentVersion    Int                @default(1)
+  currentRevisionId String?            @unique
+  label             String
+  helpText          String?
+  options           Json?
+  validation        Json?
+  bindingPath       String
+  dataSource        DataSource
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  formQuestions   FormQuestion[]
+  currentRevision QuestionRevision?  @relation("CurrentRevision", fields: [currentRevisionId], references: [id])
+  revisions       QuestionRevision[] @relation("QuestionDictionaryRevisions")
+  technologyAnswers TechnologyAnswer[]
+
+  @@index([version])
+  @@map("question_dictionary")
+}
+
+enum DataSource {
+  TECHNOLOGY
+  STAGE_SUPPLEMENT
+  CALCULATED
+}
+
+// ===== SHARED ANSWER MODEL =====
+
+model TechnologyAnswer {
+  id           String   @id @default(cuid())
+  technologyId String
+  questionKey  String
+  value        Json
+  answeredAt   DateTime @default(now())
+  answeredBy   String
+  revisionId   String?
+
+  technology Technology         @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+  question   QuestionDictionary @relation(fields: [questionKey], references: [key], onDelete: Restrict)
+  revision   QuestionRevision?  @relation(fields: [revisionId], references: [id], onDelete: SetNull)
+
+  @@unique([technologyId, questionKey])
+  @@index([technologyId])
+  @@index([questionKey])
+  @@map("technology_answers")
+}
+
+// ===== TIME-LOCK SNAPSHOT MODEL =====
+
+model SubmissionSnapshot {
+  id           String       @id @default(cuid())
+  submissionId String
+  technologyId String?
+  snapshotType SnapshotType @default(SUBMISSION)
+  capturedAt   DateTime     @default(now())
+  capturedBy   String
+
+  // Frozen data (denormalized for immutability)
+  formAnswers      Json  // { responses, repeatGroups, questionRevisions }
+  technologyMeta   Json? // { techId, technologyName, reviewer, stage, scores, triageStage?, viabilityStage? }
+  calculatedScores Json? // { impactScore, valueScore, recommendation }
+
+  // Template tracking
+  templateId      String
+  templateVersion String
+
+  submission FormSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  technology Technology?    @relation(fields: [technologyId], references: [id], onDelete: SetNull)
+
+  @@index([submissionId])
+  @@index([technologyId])
+  @@index([capturedAt])
+  @@map("submission_snapshots")
+}
+
+model Persona {
+  id              String        @id @default(cuid())
+  code            String        @unique
+  label           String
+  description     String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  userAssignments UserPersona[]
+
+  @@map("personas")
+}
+
+model User {
+  id        String        @id @default(cuid())
+  email     String        @unique
+  name      String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  personas  UserPersona[]
+
+  @@map("users")
+}
+
+model UserPersona {
+  id        String  @id @default(cuid())
+  userId    String
+  personaId String
+  primary   Boolean @default(false)
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  persona Persona @relation(fields: [personaId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, personaId])
+  @@map("user_personas")
+}
+
+model Feedback {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  pageUrl     String
+  message     String
+  contactInfo String?
+  userId      String?
+  userAgent   String?
+}

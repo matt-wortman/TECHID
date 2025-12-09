@@ -1,0 +1,22 @@
+services:
+  integration-db:
+    image: postgres:16-alpine
+    container_name: tech-triage-integration-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${INTEGRATION_DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${INTEGRATION_DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${INTEGRATION_DB_NAME:-triage_integration}
+    ports:
+      - "${INTEGRATION_DB_PORT:-5448}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${INTEGRATION_DB_NAME:-triage_integration} -U ${INTEGRATION_DB_USER:-postgres}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    volumes:
+      - integration-db-data:/var/lib/postgresql/data
+
+volumes:
+  integration-db-data:
+    driver: local

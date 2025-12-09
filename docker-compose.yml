@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  database:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-triage_db}
+      APP_DB_USER: ${APP_DB_USER}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD}
+      MIGRATOR_DB_USER: ${MIGRATOR_DB_USER}
+      MIGRATOR_DB_PASSWORD: ${MIGRATOR_DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/db/init-users.sh:/docker-entrypoint-initdb.d/10-init-users.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Next.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - HOSTNAME=0.0.0.0
+      - DATABASE_URL=${DOCKER_DATABASE_URL}
+      - PRISMA_MIGRATE_DATABASE_URL=${DOCKER_PRISMA_MIGRATE_DATABASE_URL}
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3000}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-development-secret-change-me}
+      - RUN_PRISMA_SEED=${RUN_PRISMA_SEED:-true}
+      # Set to false for production to start with clean database
+      - SEED_DEMO_DATA=${SEED_DEMO_DATA:-true}
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      # Mount a startup script for database migrations
+      - ./scripts/start.sh:/usr/src/app/start.sh
+    command: ["/bin/sh", "/usr/src/app/start.sh"]
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # For Azure: Single container with embedded database (sandbox only)
+  # Uncomment this service and comment out the above for Azure deployment
+  # azure-sandbox:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.azure
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=production
+  #     - DATABASE_URL=postgresql://postgres:postgres@localhost:5432/triage_db
+  #   volumes:
+  #     - azure_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+  # azure_data:
+
+networks:
+  default:
+    name: tech-triage-network
