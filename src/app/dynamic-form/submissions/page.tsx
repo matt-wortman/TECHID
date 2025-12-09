@@ -5,10 +5,11 @@ import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Clock, Download, Eye, FileText, Home, Loader2, Hammer, ClipboardList, BookOpen } from 'lucide-react';
+import { CheckCircle, Clock, Download, Eye, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
+import { AppNavBar } from '@/components/navigation';
 
 import { getUserSubmissions } from '../actions';
 import { getClientLogger, getOrCreateSessionId } from '@/lib/session';
@@ -58,8 +59,6 @@ function SubmissionsContent() {
   const [loading, setLoading] = useState(true);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [showSuccessBanner, setShowSuccessBanner] = useState(justSubmitted);
-
-  const navButtonClass = 'h-10 px-5 rounded-full text-[15px] font-medium gap-2';
 
   const containerCardClass = 'bg-[#e0e5ec] border-0 shadow-none rounded-3xl';
   const innerCardClass =
@@ -150,50 +149,7 @@ function SubmissionsContent() {
 
   return (
     <div className="min-h-screen bg-[#e0e5ec]">
-      <nav className="bg-[#e0e5ec] border-0 shadow-none">
-        <div className="container mx-auto px-4 py-4 max-w-5xl">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <Button asChild className={navButtonClass}>
-                <Link href="/">
-                  <Home className="h-4 w-4" />
-                  Home
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form">
-                  <FileText className="h-4 w-4" />
-                  Dynamic Form
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/builder">
-                  <Hammer className="h-4 w-4" />
-                  Builder
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/drafts">
-                  <FileText className="h-4 w-4" />
-                  Drafts
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/submissions">
-                  <ClipboardList className="h-4 w-4" />
-                  Submissions
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/library">
-                  <BookOpen className="h-4 w-4" />
-                  Library
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <AppNavBar maxWidth="5xl" />
 
       <div className="container mx-auto px-4 py-8 max-w-5xl space-y-6">
         <Card className={containerCardClass}>

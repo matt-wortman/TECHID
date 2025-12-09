@@ -32,18 +32,14 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import {
-  Home,
-  FileText,
-  Hammer,
-  ClipboardList,
-  BookOpen,
   Search,
   Plus,
   Edit,
   Trash2,
   Loader2,
+  BookOpen,
 } from 'lucide-react';
-import Link from 'next/link';
+import { AppNavBar } from '@/components/navigation';
 import { toast } from 'sonner';
 import { DataSource } from '@prisma/client';
 
@@ -90,7 +86,6 @@ export default function QuestionLibraryPage() {
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [pending, startTransition] = useTransition();
 
-  const navButtonClass = 'h-10 px-5 rounded-full text-[15px] font-medium gap-2';
   const containerCardClass = 'bg-[#e0e5ec] border-0 shadow-none rounded-3xl';
   const innerCardClass =
     'bg-white border-0 rounded-3xl [box-shadow:5px_5px_10px_0px_#a3b1c6,_-5px_-5px_10px_0px_rgba(255,255,255,0.6)]';
@@ -164,45 +159,7 @@ export default function QuestionLibraryPage() {
 
   return (
     <div className="min-h-screen bg-[#e0e5ec]">
-      {/* Navigation */}
-      <nav className="bg-[#e0e5ec] border-0 shadow-none">
-        <div className="container mx-auto px-4 py-4 max-w-6xl">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <Button asChild className={navButtonClass}>
-                <Link href="/">
-                  <Home className="h-4 w-4" />
-                  Home
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form">
-                  <FileText className="h-4 w-4" />
-                  Dynamic Form
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/builder">
-                  <Hammer className="h-4 w-4" />
-                  Builder
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/submissions">
-                  <ClipboardList className="h-4 w-4" />
-                  Submissions
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/library">
-                  <BookOpen className="h-4 w-4" />
-                  Library
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <AppNavBar />
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8 max-w-6xl space-y-6">

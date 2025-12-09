@@ -5,7 +5,8 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Hammer, Home, ClipboardList, BookOpen } from 'lucide-react';
+import { FileText } from 'lucide-react';
+import { AppNavBar } from '@/components/navigation';
 import Link from 'next/link';
 import { FormEngineProvider, DynamicFormRenderer } from '@/lib/form-engine/renderer';
 import { DynamicFormNavigation } from '@/components/form/DynamicFormNavigation';
@@ -314,64 +315,19 @@ function DynamicFormContent() {
     );
   }
 
-  const navButtonClass = 'h-10 px-5 rounded-full text-[15px] font-medium gap-2';
-
   return (
     <div className="min-h-screen bg-[#e0e5ec]">
-      <nav className="bg-[#e0e5ec] border-0 shadow-none">
-        <div className="container mx-auto max-w-4xl px-4 py-5">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <Link href="/" className="flex items-center gap-2 text-[#353535] font-semibold text-xl">
-              <div className="text-primary text-2xl">✚</div>
-              Technology Triage (Dynamic)
-            </Link>
-            <div className="flex flex-wrap items-center gap-3">
-              {currentDraftId && (
-                <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1 text-sm">
-                  <FileText className="h-4 w-4" />
-                  Draft Mode
-                </Badge>
-              )}
-              <Button asChild className={navButtonClass}>
-                <Link href="/">
-                  <Home className="h-4 w-4" />
-                  Home
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form">
-                  <FileText className="h-4 w-4" />
-                  Dynamic Form
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/builder">
-                  <Hammer className="h-4 w-4" />
-                  Builder
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/drafts">
-                  <FileText className="h-4 w-4" />
-                  Drafts
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/submissions">
-                  <ClipboardList className="h-4 w-4" />
-                  Submissions
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/library">
-                  <BookOpen className="h-4 w-4" />
-                  Library
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <AppNavBar
+        maxWidth="4xl"
+        rightContent={
+          currentDraftId && (
+            <Badge variant="secondary" className="flex items-center gap-1 px-3 py-1 text-sm">
+              <FileText className="h-4 w-4" />
+              Draft Mode
+            </Badge>
+          )
+        }
+      />
 
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Card className="bg-[#e0e5ec] shadow-none border-0 mb-8">

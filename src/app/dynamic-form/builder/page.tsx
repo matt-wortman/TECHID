@@ -26,19 +26,14 @@ import {
 } from '@/components/ui/alert-dialog'
 import {
   Activity,
-  BookOpen,
   CalendarClock,
-  ClipboardList,
   Copy,
   FileText,
-  Hammer,
-  Home,
   Layers,
   Plus,
   Trash2,
 } from 'lucide-react'
-
-const navButtonClass = 'h-10 px-5 rounded-full text-[15px] font-medium gap-2'
+import { AppNavBar } from '@/components/navigation'
 
 const containerCardClass = 'bg-[#e0e5ec] border-0 shadow-none rounded-3xl'
 const innerCardClass =
@@ -134,50 +129,7 @@ export default async function BuilderLandingPage({ searchParams }: BuilderPagePr
 
   return (
     <div className="min-h-screen bg-[#e0e5ec]">
-      <nav className="bg-[#e0e5ec] border-0 shadow-none">
-        <div className="container mx-auto px-4 py-4 max-w-6xl">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3 flex-wrap">
-              <Button asChild className={navButtonClass}>
-                <Link href="/">
-                  <Home className="h-4 w-4" />
-                  Home
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form">
-                  <FileText className="h-4 w-4" />
-                  Dynamic Form
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/builder">
-                  <Hammer className="h-4 w-4" />
-                  Builder
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/drafts">
-                  <FileText className="h-4 w-4" />
-                  Drafts
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/submissions">
-                  <ClipboardList className="h-4 w-4" />
-                  Submissions
-                </Link>
-              </Button>
-              <Button asChild className={navButtonClass}>
-                <Link href="/dynamic-form/library">
-                  <BookOpen className="h-4 w-4" />
-                  Library
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <AppNavBar />
 
       <main className="container mx-auto max-w-6xl space-y-6 px-4 py-10">
         <Card className={containerCardClass}>
